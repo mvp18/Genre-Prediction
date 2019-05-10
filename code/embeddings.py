@@ -19,9 +19,18 @@ model.load_state_dict(torch.load(MODEL_PATH))
 W2V_PATH = '/u/soupaul5/All_Data/genre_prediction/fastText/crawl-300d-2M.vec'
 model.set_w2v_path(W2V_PATH)
 
-model.build_vocab_k_words(K=100000)
-
 f = open("../data/plot_summaries.txt")
+
+sentences=[]
+for movie in f.readlines():
+	movie_id, plot = movie.split('\t')
+	for sentence in plot.split('.'):
+		if sentence!='\n' and sentence!='':
+			sentences.append(sentence)
+
+model.build_vocab_k_words(K=500000)
+model.update_vocab(sentences, tokenize=True)
+
 dict = {}
 count=0
 for movie in f.readlines():
@@ -40,6 +49,8 @@ for movie in f.readlines():
 				exit()
 			time.sleep(1)
 	dict[movie_id] = embeddings
+
+f.close()
 
 with open("/u/soupaul5/All_Data/genre_prediction/embeddings/MovieSummaries_embeddings.pkl", 'wb') as handle:
 	pickle.dump(dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
