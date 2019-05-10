@@ -3,6 +3,7 @@ import numpy as np
 import torch
 import pickle
 import time
+import sys
 
 import InferSent
 from InferSent.models import InferSent
@@ -26,7 +27,12 @@ for movie in f.readlines():
     movie_id, plot = movie.split('\t')
     embeddings=[]
     for sentence in plot.split('.'):
-        embeddings.append(model.encode(sentence, verbose=True))
+    	try:
+    		embeddings.append(model.encode(sentence, verbose=True))
+    	except:
+    		print('Error here')
+    		print(sentence)
+    		exit()
         time.sleep(1)
     dict[movie_id] = embeddings
 
