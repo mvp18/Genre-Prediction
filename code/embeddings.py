@@ -23,16 +23,20 @@ model.build_vocab_k_words(K=100000)
 
 f = open("../data/plot_summaries.txt")
 dict = {}
+count=0
 for movie in f.readlines():
 	movie_id, plot = movie.split('\t')
+	count+=1
 	embeddings=[]
 	for sentence in plot.split('.'):
 		if sentence!='\n':
 			try:
 				embeddings.append(model.encode(sentence, verbose=True))
 			except:
-				print('Error here')
-				print(sentence)
+				print('Error with :', movie_id)
+				print('SENTENCE: ', sentence)
+				print('PLOT: ', plot)
+				print('Number of plots processed till now:', count)
 				exit()
 			time.sleep(1)
 	dict[movie_id] = embeddings
