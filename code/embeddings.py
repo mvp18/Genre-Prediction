@@ -35,6 +35,7 @@ file.close()
 print('SAMPLE SENTENCE:', sentences[2000])
 
 model.build_vocab_k_words(K=100000)
+print('Updating Vocab....')
 model.update_vocab(sentences, tokenize=True)
 
 print('Vocab updated!')
