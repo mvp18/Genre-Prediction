@@ -42,10 +42,11 @@ print('Vocab updated!')
 f = open("../data/plot_summaries.txt")
 
 dict = {}
+embeddings=[]
 count=0
 for movie in f.readlines():
 	movie_id, plot = movie.split('\t')
-	embeddings=[]
+	# embeddings=[]
 	for sentence in plot.split('.'):
 		if sentence!='\n' and sentence!='':
 			try:
@@ -59,7 +60,7 @@ for movie in f.readlines():
 	if (count+1)%10000==0:
 		print('PLOTS processed:{}'.format(count+1))
 
-	dict[movie_id] = embeddings
+	# dict[movie_id] = embeddings
 
 	count+=1
 
