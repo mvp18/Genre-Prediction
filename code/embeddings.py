@@ -16,6 +16,7 @@ params_model = {'bsize': 64, 'word_emb_dim': 300, 'enc_lstm_dim': 2048,
 model = InferSent(params_model)
 model.load_state_dict(torch.load(MODEL_PATH))
 model = model.cuda()
+model = nn.DataParallel(model)
 
 W2V_PATH = '/u/soupaul5/All_Data/genre_prediction/fastText/crawl-300d-2M.vec'
 model.set_w2v_path(W2V_PATH)
@@ -56,7 +57,6 @@ for movie in f.readlines():
 				print('PLOT: ', plot)
 				print('Number of plots processed till now:', count)
 				exit()
-				time.sleep(1)
 	print(count)
 	if count%10000==0:
 		print('PLOTS processed:{}'.format(count))
