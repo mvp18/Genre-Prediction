@@ -69,7 +69,7 @@ for movie in f.readlines():
 f.close()
 
 print('DICTIONARY LENGTH:', len(dict))
-print('LAST ENTRY:', dict[len(dict)-1])
+print('LAST ENTRY:', dict[movie_id])
 
 with open("/u/soupaul5/All_Data/genre_prediction/embeddings/MovieSummaries_embeddings.pkl", 'wb') as handle:
 	pickle.dump(dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
