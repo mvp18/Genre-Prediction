@@ -15,11 +15,12 @@ params_model = {'bsize': 64, 'word_emb_dim': 300, 'enc_lstm_dim': 2048,
 
 model = InferSent(params_model)
 model.load_state_dict(torch.load(MODEL_PATH))
-model = model.cuda()
-model = torch.nn.DataParallel(model)
 
 W2V_PATH = '/u/soupaul5/All_Data/genre_prediction/fastText/crawl-300d-2M.vec'
 model.set_w2v_path(W2V_PATH)
+
+model = torch.nn.DataParallel(model)
+model.cuda()
 
 file = open("../data/plot_summaries.txt")
 
