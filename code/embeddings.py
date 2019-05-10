@@ -31,6 +31,8 @@ for movie in file.readlines():
 
 file.close()
 
+print('SAMPLE SENTENCE:', sentence[2000])
+
 model.build_vocab_k_words(K=100000)
 model.update_vocab(sentences, tokenize=True)
 
@@ -41,8 +43,6 @@ count=0
 for movie in f.readlines():
 	movie_id, plot = movie.split('\t')
 	count+=1
-	if count%10000==0:
-		print('PLOTS processed:{}'.format(count))
 	embeddings=[]
 	for sentence in plot.split('.'):
 		if sentence!='\n' and sentence!='':
@@ -54,8 +54,11 @@ for movie in f.readlines():
 				print('PLOT: ', plot)
 				print('Number of plots processed till now:', count)
 				exit()
-			time.sleep(1)
-	
+				time.sleep(1)
+	print(count)
+	if count%10000==0:
+		print('PLOTS processed:{}'.format(count))
+
 	dict[movie_id] = embeddings
 
 f.close()
