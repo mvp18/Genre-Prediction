@@ -2,6 +2,7 @@ from random import randint
 import numpy as np
 import torch
 import pickle
+import time
 
 import InferSent
 from InferSent.models import InferSent
