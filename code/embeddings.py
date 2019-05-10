@@ -28,8 +28,8 @@ for movie in f.readlines():
 		if sentence!='\n' and sentence!='':
 			sentences.append(sentence)
 
-model.build_vocab_k_words(K=500000)
-model.update_vocab(sentences, tokenize=True)
+model.build_vocab_k_words(K=100000)
+# model.update_vocab(sentences, tokenize=True)
 
 dict = {}
 count=0
