@@ -15,6 +15,7 @@ params_model = {'bsize': 64, 'word_emb_dim': 300, 'enc_lstm_dim': 2048,
 
 model = InferSent(params_model)
 model.load_state_dict(torch.load(MODEL_PATH))
+model = model.cuda()
 
 W2V_PATH = '/u/soupaul5/All_Data/genre_prediction/fastText/crawl-300d-2M.vec'
 model.set_w2v_path(W2V_PATH)
@@ -41,7 +42,7 @@ for movie in f.readlines():
 	movie_id, plot = movie.split('\t')
 	count+=1
 	if count%10000==0:
-		print(count)
+		print('PLOTS processed:{}'.format(count))
 	embeddings=[]
 	for sentence in plot.split('.'):
 		if sentence!='\n' and sentence!='':
@@ -57,8 +58,10 @@ for movie in f.readlines():
 	
 	dict[movie_id] = embeddings
 
-print(dict)
 f.close()
+
+print('DICTIONARY LENGTH:', len(dict))
+print('LAST ENTRY:', dict[len(dict)-1])
 
 with open("/u/soupaul5/All_Data/genre_prediction/embeddings/MovieSummaries_embeddings.pkl", 'wb') as handle:
 	pickle.dump(dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
