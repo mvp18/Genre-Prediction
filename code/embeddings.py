@@ -45,7 +45,6 @@ dict = {}
 count=0
 for movie in f.readlines():
 	movie_id, plot = movie.split('\t')
-	count+=1
 	embeddings=[]
 	for sentence in plot.split('.'):
 		if sentence!='\n' and sentence!='':
@@ -57,11 +56,15 @@ for movie in f.readlines():
 				print('PLOT: ', plot)
 				print('Number of plots processed till now:', count)
 				exit()
-	print(count)
-	if count%10000==0:
-		print('PLOTS processed:{}'.format(count))
+	if (count+1)%10000==0:
+		print('PLOTS processed:{}'.format(count+1))
 
 	dict[movie_id] = embeddings
+
+	count+=1
+
+	if count==40:
+		break
 
 f.close()
 
