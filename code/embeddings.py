@@ -27,7 +27,7 @@ for movie in f.readlines():
 	movie_id, plot = movie.split('\t')
 	embeddings=[]
 	for sentence in plot.split('.'):
-		if sentence!='\n'
+		if sentence!='\n':
 			try:
 				embeddings.append(model.encode(sentence, verbose=True))
 			except:
