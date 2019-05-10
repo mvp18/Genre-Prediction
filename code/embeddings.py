@@ -36,6 +36,8 @@ print('SAMPLE SENTENCE:', sentence[2000])
 model.build_vocab_k_words(K=100000)
 model.update_vocab(sentences, tokenize=True)
 
+print('Vocab updated!')
+
 f = open("../data/plot_summaries.txt")
 
 dict = {}
