@@ -27,13 +27,14 @@ for movie in f.readlines():
 	movie_id, plot = movie.split('\t')
 	embeddings=[]
 	for sentence in plot.split('.'):
-		try:
-			embeddings.append(model.encode(sentence, verbose=True))
-		except:
-			print('Error here')
-			print(sentence)
-			exit()
-		time.sleep(1)
+		if sentence!='\n'
+			try:
+				embeddings.append(model.encode(sentence, verbose=True))
+			except:
+				print('Error here')
+				print(sentence)
+				exit()
+			time.sleep(1)
 	dict[movie_id] = embeddings
 
 with open("/u/soupaul5/All_Data/genre_prediction/embeddings/MovieSummaries_embeddings.pkl", 'wb') as handle:
