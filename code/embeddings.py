@@ -68,8 +68,8 @@ for movie in f.readlines():
 
 f.close()
 
-print('DICTIONARY LENGTH:', len(dict))
-print('LAST ENTRY:', dict[movie_id])
+# print('DICTIONARY LENGTH:', len(dict))
+# print('LAST ENTRY:', dict[movie_id])
 
-np.save("MovieSummaries_embeddings.npy", dict)
+np.save("MovieSummaries_embeddings.npy", np.array(embeddings))
 print('Finished!')
