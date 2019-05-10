@@ -31,7 +31,7 @@ for movie in f.readlines():
 	for sentence in plot.split('.'):
 		if sentence!='\n' and sentence!='':
 			try:
-				embeddings.append(model.encode(sentence, verbose=True))
+				embeddings.append(model.encode(sentence))
 			except:
 				print('Error with :', movie_id)
 				print('SENTENCE: ', sentence)
@@ -43,3 +43,4 @@ for movie in f.readlines():
 
 with open("/u/soupaul5/All_Data/genre_prediction/embeddings/MovieSummaries_embeddings.pkl", 'wb') as handle:
 	pickle.dump(dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+	print('Finished!')
