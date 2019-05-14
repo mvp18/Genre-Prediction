@@ -57,22 +57,26 @@ def clean_text(text):
 
 movies_new['clean_plot'] = movies_new['plot'].apply(lambda x: clean_text(x))
 
-# new_vocabulary = []
+print('Creating vocabulary for dataset....')
 
-# for movie_id in movies_new['movie_id']:
-    
-#     plot_sr = movies_new[movies_new['movie_id']==movie_id]['clean_plot']
-    
-#     for str_obj in plot_sr:
-#         plot=str_obj
-    
-#     sentence_list = sent_tokenize(plot)
+new_vocabulary = []
 
-#     new_vocabulary = new_vocabulary + sentence_list
+for movie_id in movies_new['movie_id']:
+    
+    plot_sr = movies_new[movies_new['movie_id']==movie_id]['clean_plot']
+    
+    for str_obj in plot_sr:
+        plot=str_obj
+    
+    sentence_list = sent_tokenize(plot)
+
+    new_vocabulary = new_vocabulary + sentence_list
+
+print('\nVocab creation done!')
 
 V = 2
 MODEL_PATH = '/u/soupaul5/All_Data/genre_prediction/pretrained_models/infersent%s.pkl' % V
-params_model = {'bsize': 64, 'word_emb_dim': 300, 'enc_lstm_dim': 2048,
+params_model = {'bsize': 128, 'word_emb_dim': 300, 'enc_lstm_dim': 2048,
 				'pool_type': 'max', 'dpout_model': 0.0, 'version': V}
 
 model = InferSent(params_model)
@@ -82,15 +86,17 @@ model = model.cuda()
 W2V_PATH = '/u/soupaul5/All_Data/genre_prediction/fastText/crawl-300d-2M.vec'
 model.set_w2v_path(W2V_PATH)
 
-# model.build_vocab_k_words(K=500000)
+model.build_vocab_k_words(K=500000)
 
-# print('Updating Vocab....')
-# model.update_vocab(new_vocabulary, tokenize=True)
-# print('Vocab updated!')
+print('Updating Vocab....')
+model.update_vocab(new_vocabulary, tokenize=True)
+print('Vocab updated!')
 
 embedding_dict = {}
 
 count = 0
+
+print('Embedding creation begins...')
 
 for movie_id in movies_new['movie_id']:
     
@@ -103,13 +109,9 @@ for movie_id in movies_new['movie_id']:
 
     embedding_array = model.encode(sentence_list, tokenize=True)
 
-    print(embedding_array.shape)
-
     embedding_dict[movie_id] = embedding_array
 
     count += 1
-
-    print(count)
 
     if count%10000==0:
     	print('PLOTS processed : {}/{}'.format(count, movies_new.shape[0]))
@@ -117,8 +119,8 @@ for movie_id in movies_new['movie_id']:
 print('DICTIONARY LENGTH: {}'.format(len(embedding_dict)))
 
 # Save to disk
-
-np.save("/u/soupaul5/All_Data/genre_prediction/embeddings/MovieSummaries_embeddings.npy", embedding_dict)
+print('\nSaving entire dictionary to disk...')
+np.save("/u/soupaul5/All_Data/genre_prediction/embeddings/Infersent_embeddings.npy", embedding_dict)
 print('Finished!')
 
 
