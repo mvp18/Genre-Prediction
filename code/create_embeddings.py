@@ -113,6 +113,9 @@ for movie_id in movies_new['movie_id']:
 
     count += 1
 
+    if count==10:
+    	break
+
     if count%10000==0:
     	print('PLOTS processed : {}/{}'.format(count, movies_new.shape[0]))
 
