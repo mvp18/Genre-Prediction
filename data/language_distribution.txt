@@ -1,0 +1,7 @@
+en    42176
+id       14
+es        6
+de        4
+sw        2
+hi        1
+Name: lang, dtype: int64
