@@ -82,11 +82,11 @@ model = model.cuda()
 W2V_PATH = '/u/soupaul5/All_Data/genre_prediction/fastText/crawl-300d-2M.vec'
 model.set_w2v_path(W2V_PATH)
 
-model.build_vocab_k_words(K=500000)
+# model.build_vocab_k_words(K=500000)
 
-print('Updating Vocab....')
-model.update_vocab(new_vocabulary, tokenize=True)
-print('Vocab updated!')
+# print('Updating Vocab....')
+# model.update_vocab(new_vocabulary, tokenize=True)
+# print('Vocab updated!')
 
 embedding_dict = {}
 
