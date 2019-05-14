@@ -57,18 +57,18 @@ def clean_text(text):
 
 movies_new['clean_plot'] = movies_new['plot'].apply(lambda x: clean_text(x))
 
-new_vocabulary = []
+# new_vocabulary = []
 
-for movie_id in movies_new['movie_id']:
+# for movie_id in movies_new['movie_id']:
     
-    plot_sr = movies_new[movies_new['movie_id']==movie_id]['clean_plot']
+#     plot_sr = movies_new[movies_new['movie_id']==movie_id]['clean_plot']
     
-    for str_obj in plot_sr:
-        plot=str_obj
+#     for str_obj in plot_sr:
+#         plot=str_obj
     
-    sentence_list = sent_tokenize(plot)
+#     sentence_list = sent_tokenize(plot)
 
-    new_vocabulary = new_vocabulary + sentence_list
+#     new_vocabulary = new_vocabulary + sentence_list
 
 V = 2
 MODEL_PATH = '/u/soupaul5/All_Data/genre_prediction/pretrained_models/infersent%s.pkl' % V
