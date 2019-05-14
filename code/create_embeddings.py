@@ -101,11 +101,15 @@ for movie_id in movies_new['movie_id']:
     
     sentence_list = sent_tokenize(plot)
 
-    embedding_array = model.encode(sentence_list, tokenize=True, verbose=True)
+    embedding_array = model.encode(sentence_list, tokenize=True)
+
+    print(embedding_array.shape)
 
     embedding_dict[movie_id] = embedding_array
 
     count += 1
+
+    print(count)
 
     if count%10000==0:
     	print('PLOTS processed : {}/{}'.format(count, movies_new.shape[0]))
