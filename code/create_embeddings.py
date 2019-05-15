@@ -123,7 +123,7 @@ print('DICTIONARY LENGTH: {}'.format(len(embedding_dict)))
 
 # Save to disk
 print('\nSaving entire dictionary to disk...')
-np.save("/dccstor/cmv/MovieSummaries/Infersent_embeddings.npy", embedding_dict)
+np.save("/dccstor/cmv/MovieSummaries/embeddings/Infersent_embeddings.npy", embedding_dict)
 print('Finished!')
 
 
