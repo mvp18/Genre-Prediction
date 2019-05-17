@@ -68,7 +68,7 @@ def preprocess(meta_path, plot_path):
 	
 	df_stats = pd.DataFrame(counts, columns=['genre', '#movies'])
 
-	x = df_stats[df_stats['#movies']<10]
+	x = df_stats[df_stats['#movies']<200]
 	
 	genres_to_remove = x['genre'].values.tolist()
 
