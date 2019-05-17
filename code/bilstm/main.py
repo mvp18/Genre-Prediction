@@ -21,7 +21,7 @@ def average_pr(y_true, y_pred):
 
 list_of_ids, labels_tuple_list, labels_array = preprocess(METADATA_PATH, PLOT_SUMMARIES_PATH)
 
-train_ids, val_ids, train_labels, val_labels = train_test_split(list_of_ids, labels_tuple_list, test_size=0.2, stratify=labels_array, random_state=42)
+train_ids, val_ids, train_labels, val_labels = train_test_split(list_of_ids, labels_array, test_size=0.2, stratify=labels_array, random_state=42)
 
 print('Loading data corpus')
 

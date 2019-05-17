@@ -85,6 +85,8 @@ def preprocess(meta_path, plot_path):
 	
 	y_data_new = binarizer_new.fit_transform(reduced_genres)
 
+	print(y_data_new.shape)
+
 	labels_tuple_list = []
 
 	for i in range(len(ids)):
