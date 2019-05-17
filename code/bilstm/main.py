@@ -16,8 +16,8 @@ from datagen import DataGenerator
 
 
 def average_pr(y_true, y_pred):
-	yp_b = np.round(y_pred)
-	return average_precision_score(y_true, yp_b, average='macro')
+	yp_b = K.round(y_pred)
+	return K.constant(value=average_precision_score(y_true.cpu.numpy(), yp_b.cpu.numpy(), average='micro'), dtype='float32')
 
 list_of_ids, labels_tuple_list, labels_array = preprocess(METADATA_PATH, PLOT_SUMMARIES_PATH)
 
@@ -41,18 +41,22 @@ opt = Adam(lr=LEARNING_RATE)
 
 model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[average_pr])
 
+print(model.summary())
+
 timestampTime = time.strftime("%H%M%S")
 timestampDate = time.strftime("%d%m%Y")
 timestampLaunch = timestampDate + '_' + timestampTime
-suffix = timestampLaunch + 'bilstm'
+suffix = 'bilstm_' + timestampLaunch
 # suffix = 'bilstm'
+
+model_name = "weights.{epoch:02d}-{val_average_pr:.4f}.hdf5"
 
 save_path = '/dccstor/cmv/MovieSummaries/results/' + str(suffix)
 
 if not os.path.exists(save_path):
     os.makedirs(save_path)
 
-checkpoint = ModelCheckpoint(filepath=save_path+'bilstm_model.h5', monitor='val_average_pr', verbose=1, 
+checkpoint = ModelCheckpoint(filepath=os.path.join(save_path, model_name), monitor='val_average_pr', verbose=1, 
 							 save_weights_only=False, save_best_only=True, mode='max')
 
 reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=REDUCE_LR, verbose=1, min_lr=1e-6)
