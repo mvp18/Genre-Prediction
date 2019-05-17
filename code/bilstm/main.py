@@ -27,6 +27,10 @@ print('Loading data corpus')
 
 embedding_dict = np.load('/dccstor/cmv/MovieSummaries/embeddings/Infersent_embeddings.npy').item()
 
+for key in embedding_dict.keys():
+	if key not in list_of_ids:
+		del embedding_dict[key]
+
 print('\nDone Loading')
 
 train_generator = DataGenerator(data_dict=embedding_dict, list_IDs=train_ids, labels_dict=dict(train_labels), num_classes=labels_array.shape[1], 
