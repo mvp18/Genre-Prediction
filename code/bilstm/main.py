@@ -17,7 +17,7 @@ from datagen import DataGenerator
 
 def average_pr(y_true, y_pred):
 	yp_b = K.round(y_pred)
-	return K.constant(value=average_precision_score(y_true.cpu.numpy(), yp_b.cpu.numpy(), average='micro'), dtype='float32')
+	return K.constant(value=average_precision_score(K.eval(y_true), K.eval(yp_b), average='micro'), dtype='float')
 
 list_of_ids, labels_tuple_list, labels_array = preprocess(METADATA_PATH, PLOT_SUMMARIES_PATH)
 
