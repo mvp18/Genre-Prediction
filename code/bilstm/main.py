@@ -29,9 +29,11 @@ embedding_dict = np.load('/dccstor/cmv/MovieSummaries/embeddings/Infersent_embed
 
 print('\nDone Loading')
 
-train_generator = DataGenerator(data_dict=embedding_dict, list_IDs=train_ids, labels_dict=dict(train_labels), batch_size=BATCH_SIZE, shuffle=True)
+train_generator = DataGenerator(data_dict=embedding_dict, list_IDs=train_ids, labels_dict=dict(train_labels), num_classes=labels_array.shape[1], 
+								batch_size=BATCH_SIZE, shuffle=True)
 
-valid_generator = DataGenerator(data_dict=embedding_dict, list_IDs=val_ids, labels_dict=dict(val_labels), batch_size=BATCH_SIZE, shuffle=False)
+valid_generator = DataGenerator(data_dict=embedding_dict, list_IDs=val_ids, labels_dict=dict(val_labels), num_classes=labels_array.shape[1],
+								batch_size=BATCH_SIZE, shuffle=False)
 
 model = BiLSTM(labels_array.shape[1])
 
@@ -42,14 +44,15 @@ model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[average_pr])
 timestampTime = time.strftime("%H%M%S")
 timestampDate = time.strftime("%d%m%Y")
 timestampLaunch = timestampDate + '_' + timestampTime
-suffix = timestampLaunch + 'bilstm'
+# suffix = timestampLaunch + 'bilstm'
+suffix = 'bilstm'
 
 save_path = '/dccstor/cmv/MovieSummaries/results/' + str(suffix)
 
 if not os.path.exists(save_path):
     os.makedirs(save_path)
 
-checkpoint = ModelCheckpoint(filepath=save_path+str(weights.{epoch:02d}-{val_mean_pred:.2f}.h5), monitor='val_average_pr', verbose=1, 
+checkpoint = ModelCheckpoint(filepath=save_path+'bilstm_model.h5', monitor='val_average_pr', verbose=1, 
 							 save_weights_only=False, save_best_only=True, mode='max')
 
 reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=REDUCE_LR, verbose=1, min_lr=1e-6)

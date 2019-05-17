@@ -2,12 +2,13 @@ import numpy as np
 import keras
 
 class DataGenerator(keras.utils.Sequence):
-    def __init__(self, data_dict, list_IDs, labels_dict, batch_size, shuffle):
+    def __init__(self, data_dict, list_IDs, labels_dict, num_classes, batch_size, shuffle):
 
         self.data_dict = data_dict
         self.batch_size = batch_size
         self.labels_dict = labels_dict
         self.list_IDs = list_IDs
+        self.num_classes = num_classes
         self.shuffle = shuffle
         self.on_epoch_end()
 
@@ -35,10 +36,14 @@ class DataGenerator(keras.utils.Sequence):
     def __data_generation(self, list_IDs_temp):
         #'Generates data containing batch_size samples' # X : (n_samples, *dim, n_channels)
         # Generate data
-        for ID in enumerate(list_IDs_temp):
-            # Store sample
-            X = self.data_dict[ID]
-            # Store class
-            y = self.labels_dict[ID]
+        y = np.empty((self.batch_size, self.num_classes), dtype=int)
 
-        return X, y
+        X=[]
+
+        for i, ID in enumerate(list_IDs_temp):
+            # Store sample
+            X.append(self.data_dict[ID])
+            # Store class
+            y[i] = self.labels_dict[ID]
+
+        return np.array(X), y
