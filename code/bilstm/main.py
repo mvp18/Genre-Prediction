@@ -44,8 +44,8 @@ model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[average_pr])
 timestampTime = time.strftime("%H%M%S")
 timestampDate = time.strftime("%d%m%Y")
 timestampLaunch = timestampDate + '_' + timestampTime
-# suffix = timestampLaunch + 'bilstm'
-suffix = 'bilstm'
+suffix = timestampLaunch + 'bilstm'
+# suffix = 'bilstm'
 
 save_path = '/dccstor/cmv/MovieSummaries/results/' + str(suffix)
 
