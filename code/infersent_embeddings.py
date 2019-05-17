@@ -12,6 +12,17 @@ from sklearn.preprocessing import MultiLabelBinarizer
 import InferSent
 from InferSent.models import InferSent
 
+class wordRemover():
+    def __init__(self, word):
+        self.word = word
+        
+    def removeWord(self, listOfWords):
+        if self.word in listOfWords:
+            index = listOfWords.index(self.word)
+            del listOfWords[index]
+        return listOfWords
+
+
 metadata = pd.read_csv("../data/movie.metadata.tsv", sep = '\t', header = None)
 metadata.columns = ["movie_id",1,"movie_name",3,4,5,6,7,"genre"]
 
