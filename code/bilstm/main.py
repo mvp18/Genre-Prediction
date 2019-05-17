@@ -23,9 +23,9 @@ list_of_ids, labels_tuple_list, labels_array = preprocess(METADATA_PATH, PLOT_SU
 
 train_ids, val_ids, train_labels, val_labels = train_test_split(list_of_ids, labels_tuple_list, test_size=0.2, random_state=42)
 
-print('Loading data corpus')
+print('Loading data corpus......')
 
-embedding_dict = np.load('/dccstor/cmv/MovieSummaries/embeddings/Infersent_embeddings.npy').item()
+embedding_dict = np.load('/dccstor/cmv/MovieSummaries/embeddings/Infersent_embeddings.npy', allow_pickle=True).item()
 
 for key in embedding_dict.keys():
 	if key not in list_of_ids:
