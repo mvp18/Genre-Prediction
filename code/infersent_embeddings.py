@@ -7,6 +7,7 @@ import re
 import csv
 from tqdm import tqdm
 from nltk.tokenize import sent_tokenize
+from sklearn.preprocessing import MultiLabelBinarizer
 
 import InferSent
 from InferSent.models import InferSent
@@ -46,7 +47,31 @@ for i in movies['genre']:
 # add to 'movies' dataframe  
 movies['genre_new'] = genres
 
+genres = movies['genre_new'].values.tolist()
+
+binarizer = MultiLabelBinarizer()
+
+y_data = binarizer.fit_transform(genres)
+
+counts = []
+categories = binarizer.classes_
+
+for i in range(categories.shape[0]):
+    counts.append((categories[i], np.sum(y_data[:,i])))
+
+df_stats = pd.DataFrame(counts, columns=['genre', '#movies'])
+
+x = df_stats[df_stats['#movies']<200]
+
+genres_to_remove = x['genre'].values.tolist()
+
+for word in genres_to_remove:
+    movies['genre_new'] = movies['genre_new'].apply(wordRemover(word).removeWord)
+
 movies_new = movies[~(movies['genre_new'].str.len() == 0)]
+
+print('Updated corpus shape : ', movies_new.shape)
+
 
 def clean_text(text):
     # remove a string like {{plot}}
