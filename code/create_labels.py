@@ -6,8 +6,6 @@ import csv
 import pickle
 from tqdm import tqdm
 from sklearn.preprocessing import MultiLabelBinarizer
-from bilstm import config_lstm
-from config_lstm import *
 
 class wordRemover():
     def __init__(self, word):
@@ -105,4 +103,6 @@ def preprocess(meta_path, plot_path):
 
 	return
 
+METADATA_PATH = "/dccstor/cmv/MovieSummaries/movie.metadata.tsv"
+PLOT_SUMMARIES_PATH = "/dccstor/cmv/MovieSummaries/plot_summaries.txt"
 preprocess(METADATA_PATH, PLOT_SUMMARIES_PATH)
