@@ -13,11 +13,22 @@ from model import BiLSTM
 from sklearn.metrics import average_precision_score
 from metrics import Metrics
 from datagen import DataGenerator
+import argparse
 
+# def average_pr(y_true, y_pred):
+# 	yp_b = K.round(y_pred)
+# 	return K.constant(value=average_precision_score(K.eval(y_true), K.eval(yp_b), average='micro'), dtype='float')
 
-def average_pr(y_true, y_pred):
-	yp_b = K.round(y_pred)
-	return K.constant(value=average_precision_score(K.eval(y_true), K.eval(yp_b), average='micro'), dtype='float')
+argparser = argparse.ArgumentParser(description="Bidirectional LSTM for genre prediction.")
+
+argparser.add_argument(
+	'-run',
+	'--type_of_run',
+	help="specify dummy or full run",
+	default=0,
+	type=int)
+
+args = argparser.parse_args()
 
 list_of_ids, labels_tuple_list, labels_array = preprocess(METADATA_PATH, PLOT_SUMMARIES_PATH)
 
@@ -25,7 +36,12 @@ train_ids, val_ids, train_labels, val_labels = train_test_split(list_of_ids, lab
 
 print('Loading data corpus......')
 
-embedding_dict = np.load('/dccstor/cmv/MovieSummaries/embeddings/Infersent_embeddings.npy', allow_pickle=True).item()
+# for full run
+if args.type_of_run == 0:
+	embedding_dict = np.load('/dccstor/cmv/MovieSummaries/embeddings/Infersent_embeddings.npy', allow_pickle=True).item()
+# for dummy run
+else:
+	embedding_dict = np.load('/dccstor/cmv/MovieSummaries/embeddings/infersent_dummy.npy', allow_pickle=True).item()
 
 print('\nDone Loading')
 
@@ -39,7 +55,7 @@ model = BiLSTM(labels_array.shape[1])
 
 opt = Adam(lr=LEARNING_RATE)
 
-model.compile(loss='binary_crossentropy', optimizer=opt, metrics=[average_pr])
+model.compile(loss='binary_crossentropy', optimizer=opt)
 
 print(model.summary())
 
@@ -49,22 +65,22 @@ timestampLaunch = timestampDate + '_' + timestampTime
 suffix = 'bilstm_' + timestampLaunch
 # suffix = 'bilstm'
 
-model_name = "weights.{epoch:02d}-{val_average_pr:.4f}.hdf5"
+# model_name = "weights.{epoch:02d}-{val_average_pr:.4f}.hdf5"
 
 save_path = '/dccstor/cmv/MovieSummaries/results/' + str(suffix)
 
 if not os.path.exists(save_path):
     os.makedirs(save_path)
 
-checkpoint = ModelCheckpoint(filepath=os.path.join(save_path, model_name), monitor='val_average_pr', verbose=1, 
-							 save_weights_only=False, save_best_only=True, mode='max')
+# checkpoint = ModelCheckpoint(filepath=os.path.join(save_path, model_name), monitor='val_average_pr', verbose=1, 
+# 							 save_weights_only=False, save_best_only=True, mode='max')
 
 reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=REDUCE_LR, verbose=1, min_lr=1e-6)
 
 score_histories = Metrics()
 
 model.fit_generator(generator=train_generator, validation_data=valid_generator, use_multiprocessing=True, workers=6, verbose=1, 
-					callbacks=[checkpoint, reduce_lr, score_histories], batch_size=BATCH_SIZE, epochs=NUM_EPOCHS, shuffle=True)
+					callbacks=[reduce_lr, score_histories], batch_size=BATCH_SIZE, epochs=NUM_EPOCHS, shuffle=True)
 
 #Storing histories as numpy arrays
 

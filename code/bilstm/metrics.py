@@ -1,5 +1,5 @@
 import keras
-from sklearn.metrics import roc_auc_score, f1_score
+from sklearn.metrics import roc_auc_score, f1_score, average_precision_score
 
 class Metrics(keras.callbacks.Callback):
 	def on_train_begin(self, logs={}):
@@ -20,13 +20,14 @@ class Metrics(keras.callbacks.Callback):
 		
 		aucroc = roc_auc_score(self.validation_data[1], y_pred, average='micro')
 		f1 = f1_score(self.validation_data[1], y_pred_binarized, average='micro')
+		av_precision = average_precision_score(self.validation_data[1], y_pred_binarized, average='micro')
 		
 		self.aucs.append(aucroc)
 		self.f1.append(f1)
-		self.average_precision.append(logs.get('val_average_pr'))
+		self.average_precision.append(av_precision)
 		self.losses.append(logs.get('loss'))
 		
-		print('\nf1 score : {}, aucroc score : {}'.format(f1, aucroc))
+		print('\naverage precision : {}, f1 score : {}, aucroc score : {}'.format(av_precision, f1, aucroc))
 		
 		return
 
