@@ -8,7 +8,6 @@ import numpy as np
 import os
 from sklearn.model_selection import train_test_split
 from config_lstm import *
-from preprocess import preprocess
 from model import BiLSTM
 from sklearn.metrics import average_precision_score
 from metrics import Metrics
@@ -30,26 +29,26 @@ argparser.add_argument(
 
 args = argparser.parse_args()
 
-print('Loading data corpus......')
-
 # for full run
 if args.type_of_run == 0:
+	print('Loading data corpus......')
 	embedding_dict = np.load('/dccstor/cmv/MovieSummaries/embeddings/Infersent_embeddings.npy', allow_pickle=True).item()
 	labels_dict = np.load('/dccstor/cmv/MovieSummaries/embeddings/labels_dict.npy', allow_pickle=True).item()
+	print('\nDone Loading')
 # for dummy run
 else:
+	print('Loading dummy data......')
 	embedding_dict = np.load('/dccstor/cmv/MovieSummaries/embeddings/infersent_dummy.npy', allow_pickle=True).item()
 	labels_dict = np.load('/dccstor/cmv/MovieSummaries/embeddings/dummy_labels.npy', allow_pickle=True).item()
-
-print('\nDone Loading')
+	print('\nDone Loading')
 
 train_ids, val_ids, train_labels, val_labels = train_test_split(list(labels_dict.keys()), list(labels_dict.values()), test_size=0.2, random_state=42)
 
-train_generator = DataGenerator(data_dict=embedding_dict, list_IDs=train_ids, labels_dict=labels_dict, num_classes=labels_array.shape[1], 
-								batch_size=BATCH_SIZE, shuffle=True)
+train_generator = DataGenerator(data_dict=embedding_dict, list_IDs=train_ids, labels_dict=labels_dict,
+								num_classes=NUM_CLASSES, batch_size=BATCH_SIZE, shuffle=True)
 
-valid_generator = DataGenerator(data_dict=embedding_dict, list_IDs=val_ids, labels_dict=labels_dict, num_classes=labels_array.shape[1],
-								batch_size=BATCH_SIZE, shuffle=False)
+valid_generator = DataGenerator(data_dict=embedding_dict, list_IDs=val_ids, labels_dict=labels_dict,
+								num_classes=NUM_CLASSES, batch_size=BATCH_SIZE, shuffle=False)
 
 model = BiLSTM(NUM_CLASSES)
 
