@@ -79,7 +79,7 @@ reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=REDUCE_LR
 score_histories = Metrics()
 
 model.fit_generator(generator=train_generator, validation_data=valid_generator, use_multiprocessing=True, workers=6, verbose=1, 
-					callbacks=[reduce_lr, score_histories], batch_size=BATCH_SIZE, epochs=NUM_EPOCHS, shuffle=True)
+					callbacks=[reduce_lr, score_histories], epochs=NUM_EPOCHS, shuffle=True)
 
 #Storing histories as numpy arrays
 
