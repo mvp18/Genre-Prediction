@@ -85,14 +85,14 @@ def preprocess(meta_path, plot_path):
 	
 	y_data_new = binarizer_new.fit_transform(reduced_genres)
 
-	print('Labels array shape : {}',format(y_data_new.shape))
+	print('Labels array shape : {}'.format(y_data_new.shape))
 
 	labels_dict = {}
 
 	for i in range(len(ids)):
 		if i%10000==0:
 			print(i)
-		labels_dict[id] = y_data_new[i]
+		labels_dict[ids[i]] = y_data_new[i]
 
 	print('DICTIONARY LENGTH: {}'.format(len(labels_dict)))
 
