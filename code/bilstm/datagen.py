@@ -46,4 +46,8 @@ class DataGenerator(keras.utils.Sequence):
             # Store class
             y[i] = self.labels_dict[ID]
 
+        z=np.array(X)
+        print('X shape',z.shape)
+        print('len:', len(X))
+        
         return np.array(X), y
