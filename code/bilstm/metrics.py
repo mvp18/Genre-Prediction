@@ -15,7 +15,7 @@ class Metrics(keras.callbacks.Callback):
 		return
 
 	def on_epoch_end(self, epoch, logs={}):
-		y_pred = self.model.predict_generator(self.validation_data[0], use_multiprocessing=True, workers=6)
+		y_pred = self.model.predict(self.validation_data[0], use_multiprocessing=True, workers=6)
 		y_pred_binarized = np.round(y_pred)
 		
 		aucroc = roc_auc_score(self.validation_data[1], y_pred, average='micro')
