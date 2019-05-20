@@ -46,8 +46,14 @@ class DataGenerator(keras.utils.Sequence):
             # Store class
             y[i] = self.labels_dict[ID]
 
-        z=np.array(X)
-        print('X shape',z.shape)
-        print('len:', len(X))
-        
-        return np.array(X), y
+        sent_lengths = [embedding.shape[0] for embedding in X]
+
+        max_len = max(sent_lengths)
+
+        padded_X = np.zeros([len(X), max_len, 4096], dtype='float32')
+
+        for i, x_len in enumerate(sent_lengths):
+            
+            padded_X[i][:x_len] = X[i]
+
+        return padded_X, y
