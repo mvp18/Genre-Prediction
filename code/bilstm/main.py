@@ -30,32 +30,32 @@ argparser.add_argument(
 
 args = argparser.parse_args()
 
-list_of_ids, labels_tuple_list, labels_array = preprocess(METADATA_PATH, PLOT_SUMMARIES_PATH)
-
-train_ids, val_ids, train_labels, val_labels = train_test_split(list_of_ids, labels_tuple_list, test_size=0.2, random_state=42)
-
 print('Loading data corpus......')
 
 # for full run
 if args.type_of_run == 0:
 	embedding_dict = np.load('/dccstor/cmv/MovieSummaries/embeddings/Infersent_embeddings.npy', allow_pickle=True).item()
+	labels_dict = np.load('/dccstor/cmv/MovieSummaries/embeddings/labels_dict.npy', allow_pickle=True).item()
 # for dummy run
 else:
 	embedding_dict = np.load('/dccstor/cmv/MovieSummaries/embeddings/infersent_dummy.npy', allow_pickle=True).item()
+	labels_dict = np.load('/dccstor/cmv/MovieSummaries/embeddings/dummy_labels.npy', allow_pickle=True).item()
 
 print('\nDone Loading')
 
-train_generator = DataGenerator(data_dict=embedding_dict, list_IDs=train_ids, labels_dict=dict(train_labels), num_classes=labels_array.shape[1], 
+train_ids, val_ids, train_labels, val_labels = train_test_split(list(labels_dict.keys()), list(labels_dict.values()), test_size=0.2, random_state=42)
+
+train_generator = DataGenerator(data_dict=embedding_dict, list_IDs=train_ids, labels_dict=labels_dict, num_classes=labels_array.shape[1], 
 								batch_size=BATCH_SIZE, shuffle=True)
 
-valid_generator = DataGenerator(data_dict=embedding_dict, list_IDs=val_ids, labels_dict=dict(val_labels), num_classes=labels_array.shape[1],
+valid_generator = DataGenerator(data_dict=embedding_dict, list_IDs=val_ids, labels_dict=labels_dict, num_classes=labels_array.shape[1],
 								batch_size=BATCH_SIZE, shuffle=False)
 
-model = BiLSTM(labels_array.shape[1])
+model = BiLSTM(NUM_CLASSES)
 
 opt = Adam(lr=LEARNING_RATE)
 
-model.compile(loss='binary_crossentropy', optimizer=opt)
+model.compile(loss='binary_crossentropy', optimizer=opt, metrics=None)
 
 print(model.summary())
 
