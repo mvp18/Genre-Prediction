@@ -9,9 +9,7 @@ def weighted_loss(wout): # assuming weight size is (output_size, 2)
 		
 		ce = K.binary_crossentropy(y_true, y_pred) # (None, output_size)
 
-		batch_size = tf.shape(ce)[0]
-
-		print(batch_size)
+		batch_size = K.int_shape(ce)[0]
 
 		class_wt = np.repeat(np.expand_dims(wout, axis=0), batch_size, axis=0)
 
