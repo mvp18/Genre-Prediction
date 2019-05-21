@@ -90,6 +90,8 @@ if args.weighted_loss == 0:
 
 else:
 
+	print('Using weighted loss')
+
 	class_weights = np.load('/dccstor/cmv/MovieSummaries/embeddings/class_balanced_weights.npy', allow_pickle=True).item()
 
 	loss_function = weighted_loss(class_weights)
