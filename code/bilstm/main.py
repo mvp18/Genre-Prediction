@@ -32,7 +32,7 @@ argparser.add_argument(
 
 argparser.add_argument(
 	'-reg',
-	'-regularization',
+	'--regularization',
 	help="whether or not to apply regularization for lstms",
 	default=0,
 	type=bool
@@ -40,16 +40,16 @@ argparser.add_argument(
 
 argparser.add_argument(
 	'-reg_wt',
-	'-regularization_weight',
+	'--regularization_weight',
 	help="regularization_weight_for_recurrent layers",
 	default=0.0001,
-	type=int
+	type=float
 	)
 
 
 argparser.add_argument(
 	'-wt_loss',
-	'-weighted_loss',
+	'--weighted_loss',
 	help='whether or not to use weighted binary_crossentropy',
 	default=0,
 	type=bool
