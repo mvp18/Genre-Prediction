@@ -84,11 +84,13 @@ model_history = model.fit_generator(generator=train_generator, validation_data=v
 training_loss = model_history.history['loss']
 valid_loss = model_history.history['val_loss']
 
+print('TRAIN_LOSS: ', training_loss)
+print('VAL_LOSS: ', valid_loss)
+
 #Storing histories as numpy arrays
 
-np.save(save_path+"train_loss.npy", np.array(training_loss))
-np.save(save_path+"valid_loss.npy", np.array(valid_loss))
-np.save(save_path+"auc.npy", np.array(score_histories.aucs))
-np.save(save_path+"f1.npy", np.array(score_histories.f1))
-np.save(save_path+"average_pr.npy", np.array(score_histories.average_precision))
-
+# np.save(save_path+"train_loss.npy", np.array(training_loss))
+# np.save(save_path+"valid_loss.npy", np.array(valid_loss))
+# np.save(save_path+"auc.npy", np.array(score_histories.aucs))
+# np.save(save_path+"f1.npy", np.array(score_histories.f1))
+# np.save(save_path+"average_pr.npy", np.array(score_histories.average_precision))
