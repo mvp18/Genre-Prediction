@@ -14,6 +14,7 @@ from model import BiLSTM
 from sklearn.metrics import average_precision_score
 from metrics import Metrics
 from datagen import DataGenerator
+from loss_func import weighted_loss
 import argparse
 
 # def average_pr(y_true, y_pred):
@@ -28,6 +29,31 @@ argparser.add_argument(
 	help="specify dummy or full run",
 	default=0,
 	type=int)
+
+argparser.add_argument(
+	'-reg',
+	'-regularization',
+	help="whether or not to apply regularization for lstms",
+	default=0,
+	type=bool
+	)
+
+argparser.add_argument(
+	'-reg_wt',
+	'-regularization_weight',
+	help="regularization_weight_for_recurrent layers",
+	default=0.0001,
+	type=int
+	)
+
+
+argparser.add_argument(
+	'-wt_loss',
+	'-weighted_loss',
+	help='whether or not to use weighted binary_crossentropy',
+	default=0,
+	type=bool
+	)
 
 args = argparser.parse_args()
 
@@ -52,21 +78,30 @@ train_generator = DataGenerator(mode = 'train', data_dict=embedding_dict, list_I
 valid_generator = DataGenerator(mode = 'val', data_dict=embedding_dict, list_IDs=val_ids, labels_dict=labels_dict,
 								num_classes=NUM_CLASSES, batch_size=VAL_BATCH_SIZE, shuffle=False)
 with tf.device('/cpu:0'):
-	model = BiLSTM(NUM_CLASSES)
+	model = BiLSTM(num_classes=NUM_CLASSES, reg=args.regularization, reg_wt=args.regularization_weight)
 
 parallel_model = multi_gpu_model(model, gpus=4)
 
 opt = Adam(lr=LEARNING_RATE)
 
-parallel_model.compile(loss='binary_crossentropy', optimizer=opt, metrics=None)
+if args.weighted_loss == 0:
 
-print(parallel_model.summary())
+	parallel_model.compile(loss='binary_crossentropy', optimizer=opt, metrics=None)
+
+else:
+
+	class_weights = np.load('/dccstor/cmv/MovieSummaries/embeddings/class_balanced_weights.npy', allow_pickle=True).item()
+
+	loss_function = weighted_loss(class_weights)
+
+	parallel_model.compile(loss=loss_function, optimizer=opt, metrics=None)
+
+print(model.summary())
 
 timestampTime = time.strftime("%H%M%S")
 timestampDate = time.strftime("%d%m%Y")
 timestampLaunch = timestampDate + '_' + timestampTime
 suffix = "bilstm_" + timestampLaunch
-# suffix = 'bilstm'
 
 # model_name = "weights.{epoch:02d}-{val_average_pr:.4f}.hdf5"
 
@@ -78,12 +113,14 @@ if not os.path.exists(save_path):
 # checkpoint = ModelCheckpoint(filepath=os.path.join(save_path, model_name), monitor='val_average_pr', verbose=1, 
 # 							 save_weights_only=False, save_best_only=True, mode='max')
 
+earlyStopping = EarlyStopping(monitor='val_loss', min_delta=1e-3, patience=EARLY_STOPPING, verbose=1, mode='min')
+
 reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=REDUCE_LR, verbose=1, min_lr=1e-6)
 
 score_histories = Metrics(val_generator=valid_generator, batch_size=VAL_BATCH_SIZE, num_classes=NUM_CLASSES)
 
-model_history = parallel_model.fit_generator(generator=train_generator, validation_data=valid_generator, use_multiprocessing=True, workers=6, verbose=1, 
-					callbacks=[reduce_lr, score_histories], epochs=NUM_EPOCHS, shuffle=True)
+model_history = parallel_model.fit_generator(generator=train_generator, validation_data=valid_generator, max_queue_size=4, use_multiprocessing=True, workers=6, verbose=1, 
+					callbacks=[reduce_lr, earlyStopping, score_histories], epochs=NUM_EPOCHS, shuffle=True)
 
 training_loss = model_history.history['loss']
 valid_loss = model_history.history['val_loss']

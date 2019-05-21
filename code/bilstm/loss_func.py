@@ -1,14 +1,22 @@
 from keras.metrics import binary_crossentropy
 import keras.backend as K
+import tensorflow as tf
+import numpy as np
 
-def supply_binlossfunc3(wout): # assuming weight size is (1, output_size, 2)
-	def w_binary_crossentropy(target, output):
-			output = K.sigmoid(output)
-			ce = K.binary_crossentropy(target, output) # (None, output_size)
-			#wout = K.placeholder([16, 1]) * weights # (None, output_size, 2)
+def weighted_loss(wout): # assuming weight size is (output_size, 2)
+	
+	def w_binary_crossentropy(y_true, y_pred):
+		
+			ce = K.binary_crossentropy(y_true, y_pred) # (None, output_size)
+
 			batch_size = tf.shape(ce)[0]
 
-			weight = target * wout[:batch_size, :, 0] + (1 - target) * wout[:batch_size, :, 1]  # (None, output_size)
-			loss = weight * ce # (None, output_size)
+			wout = np.repeat(np.expand_dims(wout, axis=0), batch_size, axis=0)
+
+			weight = y_true*wout[:, :, 0] + (1 - y_true)*wout[:, :, 1]  # (None, output_size)
+			
+			loss = weight*ce # (None, output_size)
+			
 			return K.mean(loss, axis=None)	# (None, 1)
+	
 	return w_binary_crossentropy

@@ -40,7 +40,7 @@ class Metrics(keras.callbacks.Callback):
             
         val_pred_binarized = np.round(val_pred)
         
-        aucroc = roc_auc_score(val_true, val_pred_binarized, average='micro')
+        aucroc = roc_auc_score(val_true, val_pred, average='micro')
         f1 = f1_score(val_true, val_pred_binarized, average='micro')
         av_precision = average_precision_score(val_true, val_pred_binarized, average='micro')
         
