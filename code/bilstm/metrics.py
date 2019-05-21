@@ -49,6 +49,7 @@ class Metrics(keras.callbacks.Callback):
         self.average_precision.append(av_precision)
         
         print('\naverage precision : {}, f1 score : {}, aucroc score : {}'.format(av_precision, f1, aucroc))
+        print('\n')
         
         return
 

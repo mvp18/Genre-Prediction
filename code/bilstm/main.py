@@ -1,6 +1,8 @@
 import keras
+import tensorflow as tf
 from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, ProgbarLogger
+from keras.utils import multi_gpu_model
 from keras import backend as K
 import h5py
 import time
@@ -31,7 +33,7 @@ args = argparser.parse_args()
 
 # for full run
 if args.type_of_run == 0:
-	print('Loading data corpus......')
+	print('Loading full data corpus......')
 	embedding_dict = np.load('/dccstor/cmv/MovieSummaries/embeddings/Infersent_embeddings.npy', allow_pickle=True).item()
 	labels_dict = np.load('/dccstor/cmv/MovieSummaries/embeddings/labels_dict.npy', allow_pickle=True).item()
 	print('\nDone Loading')
@@ -49,27 +51,29 @@ train_generator = DataGenerator(mode = 'train', data_dict=embedding_dict, list_I
 
 valid_generator = DataGenerator(mode = 'val', data_dict=embedding_dict, list_IDs=val_ids, labels_dict=labels_dict,
 								num_classes=NUM_CLASSES, batch_size=VAL_BATCH_SIZE, shuffle=False)
+with tf.device('/cpu:0'):
+	model = BiLSTM(NUM_CLASSES)
 
-model = BiLSTM(NUM_CLASSES)
+parallel_model = multi_gpu_model(model, gpus=4)
 
 opt = Adam(lr=LEARNING_RATE)
 
-model.compile(loss='binary_crossentropy', optimizer=opt, metrics=None)
+parallel_model.compile(loss='binary_crossentropy', optimizer=opt, metrics=None)
 
-print(model.summary())
+print(parallel_model.summary())
 
 timestampTime = time.strftime("%H%M%S")
 timestampDate = time.strftime("%d%m%Y")
 timestampLaunch = timestampDate + '_' + timestampTime
-suffix = 'bilstm_' + timestampLaunch
+suffix = "bilstm_" + timestampLaunch
 # suffix = 'bilstm'
 
 # model_name = "weights.{epoch:02d}-{val_average_pr:.4f}.hdf5"
 
-save_path = '/dccstor/cmv/MovieSummaries/results/' + str(suffix)
+save_path = "/dccstor/cmv/MovieSummaries/results/" + str(suffix)
 
-# if not os.path.exists(save_path):
-#     os.makedirs(save_path)
+if not os.path.exists(save_path):
+    os.makedirs(save_path)
 
 # checkpoint = ModelCheckpoint(filepath=os.path.join(save_path, model_name), monitor='val_average_pr', verbose=1, 
 # 							 save_weights_only=False, save_best_only=True, mode='max')
@@ -78,19 +82,16 @@ reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=REDUCE_LR
 
 score_histories = Metrics(val_generator=valid_generator, batch_size=VAL_BATCH_SIZE, num_classes=NUM_CLASSES)
 
-model_history = model.fit_generator(generator=train_generator, validation_data=valid_generator, use_multiprocessing=True, workers=6, verbose=1, 
+model_history = parallel_model.fit_generator(generator=train_generator, validation_data=valid_generator, use_multiprocessing=True, workers=6, verbose=1, 
 					callbacks=[reduce_lr, score_histories], epochs=NUM_EPOCHS, shuffle=True)
 
 training_loss = model_history.history['loss']
 valid_loss = model_history.history['val_loss']
 
-print('TRAIN_LOSS: ', training_loss)
-print('VAL_LOSS: ', valid_loss)
-
 #Storing histories as numpy arrays
 
-# np.save(save_path+"train_loss.npy", np.array(training_loss))
-# np.save(save_path+"valid_loss.npy", np.array(valid_loss))
-# np.save(save_path+"auc.npy", np.array(score_histories.aucs))
-# np.save(save_path+"f1.npy", np.array(score_histories.f1))
-# np.save(save_path+"average_pr.npy", np.array(score_histories.average_precision))
+np.save(save_path+"train_loss.npy", np.array(training_loss))
+np.save(save_path+"valid_loss.npy", np.array(valid_loss))
+np.save(save_path+"auc.npy", np.array(score_histories.aucs))
+np.save(save_path+"f1.npy", np.array(score_histories.f1))
+np.save(save_path+"average_pr.npy", np.array(score_histories.average_precision))
