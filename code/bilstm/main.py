@@ -66,7 +66,7 @@ if args.type_of_run == 0:
 # for dummy run
 else:
 	print('Loading dummy data......')
-	embedding_dict = np.load('/dccstor/cmv/MovieSummaries/embeddings/infersent_dummy.npy', allow_pickle=True).item()
+	embedding_dict = np.load('/dccstor/cmv/MovieSummaries/embeddings/infersent_dummy.npy', allow_pickle=True)
 	labels_dict = np.load('/dccstor/cmv/MovieSummaries/embeddings/dummy_labels.npy', allow_pickle=True).item()
 	print('\nDone Loading')
 
