@@ -66,7 +66,7 @@ if args.type_of_run == 0:
 # for dummy run
 else:
 	print('Loading dummy data......')
-	embedding_dict = np.load('/dccstor/cmv/MovieSummaries/embeddings/infersent_dummy.npy', allow_pickle=True)
+	embedding_dict = np.load('/dccstor/cmv/MovieSummaries/embeddings/infersent_dummy.npy', allow_pickle=True).item()
 	labels_dict = np.load('/dccstor/cmv/MovieSummaries/embeddings/dummy_labels.npy', allow_pickle=True).item()
 	print('\nDone Loading')
 
@@ -92,7 +92,7 @@ else:
 
 	print('Using weighted loss')
 
-	class_weights = np.load('/dccstor/cmv/MovieSummaries/embeddings/class_balanced_weights.npy', allow_pickle=True).item()
+	class_weights = np.load('/dccstor/cmv/MovieSummaries/embeddings/class_balanced_weights.npy', allow_pickle=True)
 
 	loss_function = weighted_loss(class_weights)
 
