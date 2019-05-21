@@ -34,11 +34,11 @@ class Metrics(keras.callbacks.Callback):
         
         for batch in range(num_batches):
             
-            xVal, yVal = next(self.val_generator)
-            
-            val_pred[batch * self.batch_size : (batch+1) * self.batch_size] = self.model.predict(xVal)
-            
-            val_true[batch * self.batch_size : (batch+1) * self.batch_size] = yVal
+	        xVal, yVal = next(self.val_generator)
+	        
+	        val_pred[batch * self.batch_size : (batch+1) * self.batch_size] = self.model.predict(xVal)
+	        
+	        val_true[batch * self.batch_size : (batch+1) * self.batch_size] = yVal
             
 		val_pred_binarized = np.round(val_pred)
 		
