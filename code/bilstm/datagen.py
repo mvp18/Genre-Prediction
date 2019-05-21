@@ -2,8 +2,9 @@ import numpy as np
 import keras
 
 class DataGenerator(keras.utils.Sequence):
-    def __init__(self, data_dict, list_IDs, labels_dict, num_classes, batch_size, shuffle):
+    def __init__(self, mode, data_dict, list_IDs, labels_dict, num_classes, batch_size, shuffle):
 
+        self.mode = mode
         self.data_dict = data_dict
         self.batch_size = batch_size
         self.labels_dict = labels_dict
@@ -34,26 +35,37 @@ class DataGenerator(keras.utils.Sequence):
             np.random.shuffle(self.indexes)
         
     def __data_generation(self, list_IDs_temp):
-        #'Generates data containing batch_size samples' # X : (n_samples, *dim, n_channels)
         # Generate data
-        y = np.empty((self.batch_size, self.num_classes), dtype=int)
+        if self.mode == 'train':
 
-        X=[]
+            y = np.empty((self.batch_size, self.num_classes), dtype=int)
 
-        for i, ID in enumerate(list_IDs_temp):
-            # Store sample
-            X.append(self.data_dict[ID])
-            # Store class
-            y[i] = self.labels_dict[ID]
+            X=[]
 
-        sent_lengths = [embedding.shape[0] for embedding in X]
+            for i, ID in enumerate(list_IDs_temp):
+                # Store sample
+                X.append(self.data_dict[ID])
+                # Store class
+                y[i] = self.labels_dict[ID]
 
-        max_len = max(sent_lengths)
+            sent_lengths = [embedding.shape[0] for embedding in X]
 
-        padded_X = np.zeros([len(X), max_len, 4096], dtype='float32')
+            max_len = max(sent_lengths)
 
-        for i, x_len in enumerate(sent_lengths):
-            
-            padded_X[i][:x_len] = X[i]
+            padded_X = np.zeros([len(X), max_len, 4096], dtype='float32')
 
-        return padded_X, y
+            for i, x_len in enumerate(sent_lengths):
+                
+                padded_X[i][:x_len] = X[i]
+
+            return padded_X, y
+
+        elif self.mode == 'val':
+
+            assert len(list_IDs_temp)==1, "VAL_BATCH_SIZE is not 1."
+
+            X = self.data_dict[list_IDs_temp[0]]
+
+            y = self.labels_dict[list_IDs_temp[0]]
+
+            return np.expand_dims(X, axis=0), y

@@ -44,11 +44,11 @@ else:
 
 train_ids, val_ids, train_labels, val_labels = train_test_split(list(labels_dict.keys()), list(labels_dict.values()), test_size=0.2, random_state=42)
 
-train_generator = DataGenerator(data_dict=embedding_dict, list_IDs=train_ids, labels_dict=labels_dict,
-								num_classes=NUM_CLASSES, batch_size=BATCH_SIZE, shuffle=True)
+train_generator = DataGenerator(mode = 'train', data_dict=embedding_dict, list_IDs=train_ids, labels_dict=labels_dict,
+								num_classes=NUM_CLASSES, batch_size=TRAIN_BATCH_SIZE, shuffle=True)
 
-valid_generator = DataGenerator(data_dict=embedding_dict, list_IDs=val_ids, labels_dict=labels_dict,
-								num_classes=NUM_CLASSES, batch_size=BATCH_SIZE, shuffle=False)
+valid_generator = DataGenerator(mode = 'val', data_dict=embedding_dict, list_IDs=val_ids, labels_dict=labels_dict,
+								num_classes=NUM_CLASSES, batch_size=VAL_BATCH_SIZE, shuffle=False)
 
 model = BiLSTM(NUM_CLASSES)
 
@@ -68,19 +68,20 @@ suffix = 'bilstm_' + timestampLaunch
 
 save_path = '/dccstor/cmv/MovieSummaries/results/' + str(suffix)
 
-if not os.path.exists(save_path):
-    os.makedirs(save_path)
+# if not os.path.exists(save_path):
+#     os.makedirs(save_path)
 
 # checkpoint = ModelCheckpoint(filepath=os.path.join(save_path, model_name), monitor='val_average_pr', verbose=1, 
 # 							 save_weights_only=False, save_best_only=True, mode='max')
 
 reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=REDUCE_LR, verbose=1, min_lr=1e-6)
 
-score_histories = Metrics()
+score_histories = Metrics(val_generator=valid_generator, batch_size=VAL_BATCH_SIZE, num_classes=NUM_CLASSES)
 
-model.fit_generator(generator=train_generator, validation_data=valid_generator, use_multiprocessing=True, workers=6, verbose=1, 
+model_history = model.fit_generator(generator=train_generator, validation_data=valid_generator, use_multiprocessing=True, workers=6, verbose=1, 
 					callbacks=[reduce_lr, score_histories], epochs=NUM_EPOCHS, shuffle=True)
 
+print(model_history.history)
 #Storing histories as numpy arrays
 
 np.save(save_path+"losses.npy", np.array(score_histories.losses))
