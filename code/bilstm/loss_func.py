@@ -17,6 +17,6 @@ def weighted_loss(wout): # assuming weight size is (output_size, 2)
 			
 			loss = weight*ce # (None, output_size)
 			
-			return K.mean(loss, axis=None)	# (None, 1)
+			return K.mean(loss, axis=None)	# mean loss value
 	
 	return w_binary_crossentropy
