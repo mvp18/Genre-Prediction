@@ -11,6 +11,8 @@ def weighted_loss(wout): # assuming weight size is (output_size, 2)
 
 		batch_size = tf.shape(ce)[0]
 
+		print(batch_size)
+
 		class_wt = np.repeat(np.expand_dims(wout, axis=0), batch_size, axis=0)
 
 		weight = y_true*class_wt[:, :, 0] + (1 - y_true)*class_wt[:, :, 1]  # (None, output_size)
