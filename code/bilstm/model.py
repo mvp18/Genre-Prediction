@@ -8,9 +8,9 @@ def BiLSTM(num_classes):
     data_dim = 4096
     
     model = Sequential()
-    model.add(Bidirectional(LSTM(2048, return_sequences=True), input_shape=(None, data_dim)))
-    model.add(Bidirectional(LSTM(1024, return_sequences=True)))
-    model.add(Bidirectional(LSTM(512, return_sequences=False)))
+    model.add(Bidirectional(LSTM(1024, return_sequences=True), input_shape=(None, data_dim)))
+    model.add(Bidirectional(LSTM(512, return_sequences=True)))
+    model.add(Bidirectional(LSTM(256, return_sequences=False)))
     model.add(Dropout(DROPOUT_RATE, seed=1))
     model.add(Dense(256, activation='relu', kernel_initializer='he_normal'))
     model.add(Dropout(DROPOUT_RATE, seed=1))

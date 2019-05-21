@@ -81,10 +81,13 @@ score_histories = Metrics(val_generator=valid_generator, batch_size=VAL_BATCH_SI
 model_history = model.fit_generator(generator=train_generator, validation_data=valid_generator, use_multiprocessing=True, workers=6, verbose=1, 
 					callbacks=[reduce_lr, score_histories], epochs=NUM_EPOCHS, shuffle=True)
 
-print(model_history.history)
+training_loss = model_history.history['loss']
+valid_loss = model_history.history['val_loss']
+
 #Storing histories as numpy arrays
 
-np.save(save_path+"losses.npy", np.array(score_histories.losses))
+np.save(save_path+"train_loss.npy", np.array(training_loss))
+np.save(save_path+"valid_loss.npy", np.array(valid_loss))
 np.save(save_path+"auc.npy", np.array(score_histories.aucs))
 np.save(save_path+"f1.npy", np.array(score_histories.f1))
 np.save(save_path+"average_pr.npy", np.array(score_histories.average_precision))

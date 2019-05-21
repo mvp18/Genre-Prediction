@@ -1,6 +1,7 @@
 import keras
 from sklearn.metrics import roc_auc_score, f1_score, average_precision_score
 from keras.losses import binary_crossentropy
+import numpy as np
 
 class Metrics(keras.callbacks.Callback):
 
@@ -14,7 +15,6 @@ class Metrics(keras.callbacks.Callback):
         self.aucs = []
         self.f1 = []
         self.average_precision = []
-        self.losses = []
 
     def on_train_end(self, logs={}):
         return
@@ -36,9 +36,9 @@ class Metrics(keras.callbacks.Callback):
             
             xVal, yVal = next(self.val_generator)
             
-            val_pred[batch * self.batch_size : (batch+1) * self.batch_size] = self.model.predict(xVal)
+            val_pred[batch * self.batch_size : (batch+1) * self.batch_size] = np.squeeze(self.model.predict(xVal, batch_size=self.batch_size), axis=0)
             
-            val_true[batch * self.batch_size : (batch+1) * self.batch_size] = yVal
+            val_true[batch * self.batch_size : (batch+1) * self.batch_size] = np.squeeze(yVal, axis=0)
             
         val_pred_binarized = np.round(val_pred)
         
@@ -49,7 +49,6 @@ class Metrics(keras.callbacks.Callback):
         self.aucs.append(aucroc)
         self.f1.append(f1)
         self.average_precision.append(av_precision)
-        self.losses.append(logs.get('loss'))
         
         print('\naverage precision : {}, f1 score : {}, aucroc score : {}'.format(av_precision, f1, aucroc))
         
