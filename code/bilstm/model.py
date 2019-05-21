@@ -12,9 +12,9 @@ def BiLSTM(num_classes):
     model.add(Bidirectional(LSTM(1024, return_sequences=True)))
     model.add(Bidirectional(LSTM(512, return_sequences=False)))
     model.add(Dropout(DROPOUT_RATE, seed=1))
-    model.add(Dense(500, activation='relu', kernel_initializer='he_normal'))
+    model.add(Dense(256, activation='relu', kernel_initializer='he_normal'))
     model.add(Dropout(DROPOUT_RATE, seed=1))
-    model.add(Dense(400, activation='relu', kernel_initializer='he_normal'))
+    model.add(Dense(128, activation='relu', kernel_initializer='he_normal'))
     model.add(Dense(num_classes, activation='sigmoid', kernel_initializer='he_normal'))
 
     return model

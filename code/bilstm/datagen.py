@@ -58,8 +58,6 @@ class DataGenerator(keras.utils.Sequence):
                 
                 padded_X[i][:x_len] = X[i]
 
-            print('X shape:{}, y shape:{}'.format(padded_X.shape, y.shape))
-
             return padded_X, y
 
         elif self.mode == 'val':
@@ -70,6 +68,4 @@ class DataGenerator(keras.utils.Sequence):
 
             y = self.labels_dict[list_IDs_temp[0]]
 
-            print('Val X shape:{}, y shape:{}'.format(X.shape, y.shape))
-
-            return np.expand_dims(X, axis=0), y
+            return np.expand_dims(X, axis=0), np.expand_dims(y, axis=0)
