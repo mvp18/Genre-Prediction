@@ -109,8 +109,10 @@ suffix = "bilstm_" + timestampLaunch + "_reg_" + str(args.regularization) + "_lo
 
 save_path = "/dccstor/cmv/MovieSummaries/results/" + str(suffix)
 
-if not os.path.exists(save_path):
-    os.makedirs(save_path)
+if args.type_of_run == 0:
+	
+	if not os.path.exists(save_path):
+	    os.makedirs(save_path)
 
 # checkpoint = ModelCheckpoint(filepath=os.path.join(save_path, model_name), monitor='val_average_pr', verbose=1, 
 # 							 save_weights_only=False, save_best_only=True, mode='max')
