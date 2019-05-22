@@ -86,6 +86,17 @@ def doc2vec(data_df):
 
     return np.array(x_data), y_data
 
+class wordRemover():
+    def __init__(self, word):
+        self.word = word
+        
+    def removeWord(self, listOfWords):
+        if self.word in listOfWords:
+            index = listOfWords.index(self.word)
+            del listOfWords[index]
+        return listOfWords
+
+
 metadata = pd.read_csv("../data/movie.metadata.tsv", sep = '\t', header = None)
 metadata.columns = ["movie_id",1,"movie_name",3,4,5,6,7,"genre"]
 
@@ -121,11 +132,38 @@ for i in movies['genre']:
 # add to 'movies' dataframe  
 movies['genre_new'] = genres
 
+genres = movies['genre_new'].values.tolist()
+
+binarizer = MultiLabelBinarizer()
+
+y_data = binarizer.fit_transform(genres)
+
+counts = []
+categories = binarizer.classes_
+
+for i in range(categories.shape[0]):
+    counts.append((categories[i], np.sum(y_data[:,i])))
+
+df_stats = pd.DataFrame(counts, columns=['genre', '#movies'])
+
+x = df_stats[df_stats['#movies']<200]
+
+genres_to_remove = x['genre'].values.tolist()
+
+for word in genres_to_remove:
+    movies['genre_new'] = movies['genre_new'].apply(wordRemover(word).removeWord)
+
 movies_new = movies[~(movies['genre_new'].str.len() == 0)]
+
+print('Updated corpus shape : ', movies_new.shape)
 
 movies_new['clean_plot'] = movies_new['plot'].apply(lambda x: clean_text(x))
 
 x_data, y_data = doc2vec(movies_new)
+
+print('X data shape:', x_data.shape)
+
+print('Y data shape:', y_data.shape)
 
 print('Saving data to disk')
 
