@@ -43,9 +43,9 @@ def clean_text(text):
 def doc2vec(data_df):
     data = []
     print("Building TaggedDocuments")
-    total = len(data_df[['movie_id', 'clean_plot']].as_matrix().tolist())
+    total = len(data_df[['movie_id', 'clean_plot']].values.tolist())
     processed = 0
-    for x in data_df[['movie_id', 'clean_plot']].as_matrix().tolist():
+    for x in data_df[['movie_id', 'clean_plot']].values.tolist():
         label = ["_".join(x[0].split())]
         words = []
         sentences = sent_tokenize(x[1])
@@ -75,10 +75,10 @@ def doc2vec(data_df):
     print('\nBuilding doc2vec vectors')
     # Build doc2vec vectors
     x_data = []
-    genres = data_df['genre_new'].as_matrix().tolist()
+    genres = data_df['genre_new'].values.tolist()
     binarizer = MultiLabelBinarizer()
     y_data = binarizer.fit_transform(genres)
-    ids = data_df[['movie_id']].as_matrix().tolist()
+    ids = data_df[['movie_id']].values.tolist()
     for i in range(len(ids)):
         movie_id = ids[i][0]
         label = "_".join(movie_id.split())
