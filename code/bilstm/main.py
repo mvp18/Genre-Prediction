@@ -34,7 +34,7 @@ argparser.add_argument(
 	'-reg',
 	'--regularization',
 	help="whether or not to apply regularization for lstms",
-	default=0,
+	default=False,
 	type=bool
 	)
 
@@ -51,7 +51,7 @@ argparser.add_argument(
 	'-wt_loss',
 	'--weighted_loss',
 	help='whether or not to use weighted binary_crossentropy',
-	default=0,
+	default=False,
 	type=bool
 	)
 
@@ -84,7 +84,7 @@ parallel_model = multi_gpu_model(model, gpus=4)
 
 opt = Adam(lr=LEARNING_RATE)
 
-if args.weighted_loss == 0:
+if args.weighted_loss == False:
 
 	parallel_model.compile(loss='binary_crossentropy', optimizer=opt, metrics=None)
 
@@ -103,7 +103,7 @@ print(model.summary())
 timestampTime = time.strftime("%H%M%S")
 timestampDate = time.strftime("%d%m%Y")
 timestampLaunch = timestampDate + '_' + timestampTime
-suffix = "bilstm_" + timestampLaunch + "reg_" + str(args.regularization) + "loss_" + str(args.weighted_loss)
+suffix = "bilstm_" + timestampLaunch + "_reg_" + str(args.regularization) + "_loss_" + str(args.weighted_loss)
 
 # model_name = "weights.{epoch:02d}-{val_average_pr:.4f}.hdf5"
 
