@@ -79,7 +79,6 @@ valid_generator = DataGenerator(mode = 'val', data_dict=embedding_dict, list_IDs
 								num_classes=NUM_CLASSES, batch_size=VAL_BATCH_SIZE, shuffle=False)
 with tf.device('/cpu:0'):
 	model = BiLSTM(num_classes=NUM_CLASSES, reg=args.regularization, reg_wt=args.regularization_weight)
-print(model.summary())
 
 parallel_model = multi_gpu_model(model, gpus=4)
 
