@@ -11,16 +11,16 @@ def BiLSTM(num_classes, reg, reg_wt):
     model = Sequential()
     
     if reg==False:
-        model.add(Bidirectional(CuDNNLSTM(1024, return_sequences=True, recurrent_initializer='he_normal'), input_shape=(None, data_dim)))
-        model.add(Bidirectional(CuDNNLSTM(512, return_sequences=True, recurrent_initializer='he_normal')))
-        model.add(Bidirectional(CuDNNLSTM(256, return_sequences=False, recurrent_initializer='he_normal')))
+        model.add(Bidirectional(LSTM(1024, return_sequences=True, recurrent_initializer='he_normal'), input_shape=(None, data_dim)))
+        model.add(Bidirectional(LSTM(512, return_sequences=True, recurrent_initializer='he_normal')))
+        model.add(Bidirectional(LSTM(256, return_sequences=False, recurrent_initializer='he_normal')))
     
     else:
-        model.add(Bidirectional(CuDNNLSTM(1024, return_sequences=True, kernel_regularizer=regularizers.l1_l2(reg_wt), 
+        model.add(Bidirectional(LSTM(1024, return_sequences=True, kernel_regularizer=regularizers.l1_l2(reg_wt), 
                                 recurrent_regularizer=regularizers.l1_l2(reg_wt), recurrent_initializer='he_normal'), input_shape=(None, data_dim)))
-        model.add(Bidirectional(CuDNNLSTM(512, return_sequences=True, kernel_regularizer=regularizers.l1_l2(reg_wt), 
+        model.add(Bidirectional(LSTM(512, return_sequences=True, kernel_regularizer=regularizers.l1_l2(reg_wt), 
                                 recurrent_regularizer=regularizers.l1_l2(reg_wt), recurrent_initializer='he_normal')))
-        model.add(Bidirectional(CuDNNLSTM(256, return_sequences=False, kernel_regularizer=regularizers.l1_l2(reg_wt), 
+        model.add(Bidirectional(LSTM(256, return_sequences=False, kernel_regularizer=regularizers.l1_l2(reg_wt), 
                                 recurrent_regularizer=regularizers.l1_l2(reg_wt), recurrent_initializer='he_normal')))
     
     model.add(Dropout(DROPOUT_RATE, seed=1))
