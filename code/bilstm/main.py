@@ -103,7 +103,7 @@ print(model.summary())
 timestampTime = time.strftime("%H%M%S")
 timestampDate = time.strftime("%d%m%Y")
 timestampLaunch = timestampDate + '_' + timestampTime
-suffix = "bilstm_" + timestampLaunch
+suffix = "bilstm_" + timestampLaunch + "reg_" + str(args.regularization) + "loss_" + str(args.weighted_loss)
 
 # model_name = "weights.{epoch:02d}-{val_average_pr:.4f}.hdf5"
 
@@ -117,7 +117,7 @@ if not os.path.exists(save_path):
 
 earlyStopping = EarlyStopping(monitor='val_loss', min_delta=1e-3, patience=EARLY_STOPPING, verbose=1, mode='min')
 
-reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=REDUCE_LR, verbose=1, min_lr=1e-6)
+reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=REDUCE_LR, verbose=1, min_lr=1e-6, mode='min')
 
 score_histories = Metrics(val_generator=valid_generator, batch_size=VAL_BATCH_SIZE, num_classes=NUM_CLASSES)
 
