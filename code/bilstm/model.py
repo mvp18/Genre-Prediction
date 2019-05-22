@@ -18,7 +18,7 @@ def BiLSTM(num_classes, reg, reg_wt):
     else:
         
         model.add(Bidirectional(CuDNNLSTM(1024, return_sequences=True, kernel_regularizer=regularizers.l1_l2(reg_wt), recurrent_regularizer=regularizers.l1_l2(reg_wt),
-                                                kernel_initializer='he_normal', recurrent_initializer='he_normal', input_shape=(None, data_dim))))
+                                                kernel_initializer='he_normal', recurrent_initializer='he_normal'), input_shape=(None, data_dim)))
         
         model.add(Bidirectional(CuDNNLSTM(512, return_sequences=True, kernel_regularizer=regularizers.l1_l2(reg_wt), recurrent_regularizer=regularizers.l1_l2(reg_wt),
                                                 kernel_initializer='he_normal', recurrent_initializer='he_normal')))
