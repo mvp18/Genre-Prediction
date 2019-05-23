@@ -10,7 +10,8 @@ import numpy as np
 import os
 from sklearn.model_selection import train_test_split
 from config_lstm import *
-from model import BiLSTM
+from model_small import BiLSTM
+# from model import BiLSTM
 from sklearn.metrics import average_precision_score
 from metrics import Metrics
 from datagen import DataGenerator
@@ -94,7 +95,9 @@ else:
 
 	class_weights = np.load('/dccstor/cmv/MovieSummaries/embeddings/class_balanced_weights.npy', allow_pickle=True)
 
-	loss_function = weighted_loss(class_weights)
+	class_wts = np.repeat(np.expand_dims(class_weights, axis=0), len(embedding_dict), axis=0)
+
+	loss_function = weighted_loss(class_wts)
 
 	parallel_model.compile(loss=loss_function, optimizer=opt, metrics=None)
 
