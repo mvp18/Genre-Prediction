@@ -78,16 +78,19 @@ train_generator = DataGenerator(mode = 'train', data_dict=embedding_dict, list_I
 
 valid_generator = DataGenerator(mode = 'val', data_dict=embedding_dict, list_IDs=val_ids, labels_dict=labels_dict,
 								num_classes=NUM_CLASSES, batch_size=VAL_BATCH_SIZE, shuffle=False)
-with tf.device('/cpu:0'):
-	model = BiLSTM(num_classes=NUM_CLASSES, reg=args.regularization, reg_wt=args.regularization_weight)
+# with tf.device('/cpu:0'):
+# 	model = BiLSTM(num_classes=NUM_CLASSES, reg=args.regularization, reg_wt=args.regularization_weight)
 
-parallel_model = multi_gpu_model(model, gpus=4)
+model = BiLSTM(num_classes=NUM_CLASSES, reg=args.regularization, reg_wt=args.regularization_weight)
+
+# parallel_model = multi_gpu_model(model, gpus=4)
 
 opt = Adam(lr=LEARNING_RATE)
 
 if args.weighted_loss == False:
 
-	parallel_model.compile(loss='binary_crossentropy', optimizer=opt, metrics=None)
+	# parallel_model.compile(loss='binary_crossentropy', optimizer=opt, metrics=None)
+	model.compile(loss='binary_crossentropy', optimizer=opt, metrics=None)
 
 else:
 
@@ -100,6 +103,8 @@ else:
 	loss_function = weighted_loss(class_wts)
 
 	parallel_model.compile(loss=loss_function, optimizer=opt, metrics=None)
+
+	model.compile(loss=loss_function, optimizer=opt, metrics=None)
 
 print(model.summary())
 

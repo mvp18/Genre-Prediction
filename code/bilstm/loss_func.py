@@ -11,6 +11,8 @@ def weighted_loss(wout): # assuming weight size is (output_size, 2)
 
 		batch_size = K.int_shape(ce)[0]
 
+		print('BATCH_SIZE:', batch_size)
+
 		weight = y_true*wout[:batch_size, :, 0] + (1 - y_true)*wout[:batch_size, :, 1]  # (None, output_size)
 
 		loss = weight*ce # (None, output_size)
