@@ -102,7 +102,7 @@ else:
 
 	loss_function = weighted_loss(class_wts)
 
-	parallel_model.compile(loss=loss_function, optimizer=opt, metrics=None)
+	# parallel_model.compile(loss=loss_function, optimizer=opt, metrics=None)
 
 	model.compile(loss=loss_function, optimizer=opt, metrics=None)
 
@@ -131,7 +131,10 @@ reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=REDUCE_LR
 
 score_histories = Metrics(val_generator=valid_generator, batch_size=VAL_BATCH_SIZE, num_classes=NUM_CLASSES)
 
-model_history = parallel_model.fit_generator(generator=train_generator, validation_data=valid_generator, max_queue_size=10, use_multiprocessing=True, workers=4, verbose=1, 
+# model_history = parallel_model.fit_generator(generator=train_generator, validation_data=valid_generator, max_queue_size=10, use_multiprocessing=True, workers=4, verbose=1, 
+# 					callbacks=[reduce_lr, earlyStopping, score_histories], epochs=NUM_EPOCHS, shuffle=True)
+
+model_history = model.fit_generator(generator=train_generator, validation_data=valid_generator, max_queue_size=10, use_multiprocessing=True, workers=4, verbose=1, 
 					callbacks=[reduce_lr, earlyStopping, score_histories], epochs=NUM_EPOCHS, shuffle=True)
 
 training_loss = model_history.history['loss']
