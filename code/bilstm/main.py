@@ -100,7 +100,7 @@ else:
 
 	class_wts = np.repeat(np.expand_dims(class_weights, axis=0), len(embedding_dict), axis=0)
 
-	loss_function = weighted_loss(class_wts)
+	loss_function = weighted_loss(K.constant(value=class_wts, dtype='float'))
 
 	parallel_model.compile(loss=loss_function, optimizer=opt, metrics=None)
 
